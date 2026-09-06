@@ -9,6 +9,9 @@ services:
       - "4321:4321"
     # --force replaces a stale dev.json lockfile left behind when the
     # container is killed rather than stopped cleanly
+    environment:
+      # Windows bind mount: inotify events do not cross the WSL2 boundary
+      WATCH_POLLING: "true"
     command: npm run dev -- --force
     stdin_open: true
     tty: true
