@@ -7,7 +7,7 @@ backend:
   branch: main
   # OAuth token-exchange endpoint. Replace once the Worker exists (step 4c);
   # login will not work until then.
-  base_url: https://REPLACE-ME.workers.dev
+  # base_url: https://<worker>.workers.dev   # uncomment once an OAuth worker exists
 
 # Where uploads are written in the repo, and the URL they get on the site.
 media_folder: public/uploads
