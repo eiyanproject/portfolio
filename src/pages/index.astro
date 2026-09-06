@@ -1,17 +1,42 @@
 ---
-
+const title = 'Afif — Portfolio';
 ---
 
+<!doctype html>
 <html lang="en">
-	<head>
-		<meta charset="utf-8" />
-		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-		<link rel="icon" href="/favicon.ico" />
-		<meta name="viewport" content="width=device-width" />
-		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
-	</head>
-	<body>
-		<h1>Astro</h1>
-	</body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{title}</title>
+    <meta name="description" content="Portfolio of Afif — infrastructure, homelab, and software projects." />
+  </head>
+  <body>
+    <main class="box">
+      <h1>Afif</h1>
+      <p>Portfolio in progress.</p>
+    </main>
+  </body>
 </html>
+
+<style>
+  body {
+    background: #0d1117;
+    color: #c9d1d9;
+    font-family: system-ui, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    margin: 0;
+  }
+  .box {
+    text-align: center;
+  }
+  h1 {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+  }
+  p {
+    color: #8b949e;
+  }
+</style>
