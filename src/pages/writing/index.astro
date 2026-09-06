@@ -1,8 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
+import { showDrafts } from '../../lib/drafts';
 import Base from '../../layouts/Base.astro';
 
-const showDrafts = import.meta.env.DEV;
 
 const posts = (await getCollection('posts', ({ data }) => showDrafts || !data.draft)).sort(
   (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()

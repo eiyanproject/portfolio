@@ -45,3 +45,16 @@ jobs:
           rsync -avz --delete \
             -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
             cms/ "deploy@${{ secrets.DEPLOY_HOST }}:/var/www/cms/"
+
+      # Rebuild the same content with drafts included. This overwrites dist/,
+      # which is fine: production has already been deployed above.
+      - name: Build preview (drafts included)
+        env:
+          SHOW_DRAFTS: 'true'
+        run: npm run build
+
+      - name: Deploy preview to OCI
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
+            dist/ "deploy@${{ secrets.DEPLOY_HOST }}:/var/www/preview/"

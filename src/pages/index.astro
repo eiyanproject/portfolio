@@ -1,9 +1,8 @@
 ---
 import { getCollection } from 'astro:content';
+import { showDrafts } from '../lib/drafts';
 import Base from '../layouts/Base.astro';
 
-// Drafts are visible while running `astro dev`, excluded from production builds.
-const showDrafts = import.meta.env.DEV;
 
 const projects = (await getCollection('projects', ({ data }) => showDrafts || !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()

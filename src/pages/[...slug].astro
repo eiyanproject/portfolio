@@ -3,10 +3,10 @@
 // getStaticPaths only emits routes for entries that exist, so this does not
 // swallow /projects/ or /writing/.
 import { getCollection, render } from 'astro:content';
+import { showDrafts } from '../lib/drafts';
 import Base from '../layouts/Base.astro';
 
 export async function getStaticPaths() {
-  const showDrafts = import.meta.env.DEV;
   const pages = await getCollection('pages', ({ data }) => showDrafts || !data.draft);
 
   return pages.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
