@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { showDrafts } from '../lib/drafts';
 import { settings } from '../lib/settings';
+import { layout } from '../lib/theme';
 import Base from '../layouts/Base.astro';
 
 const projects = (await getCollection('projects', ({ data }) => showDrafts || !data.draft)).sort(
@@ -28,9 +29,12 @@ const shown = (featured.length > 0 ? featured : projects).slice(0, 4);
     shown.length === 0 ? (
       <p class="empty">Nothing published yet.</p>
     ) : (
-      <ul class="card-list">
+      <ul class="card-list card-list--projects">
         {shown.map((project) => (
           <li class="card">
+            {layout.covers && project.data.cover && (
+              <img class="card-cover" src={project.data.cover} alt={project.data.coverAlt ?? ""} loading="lazy" />
+            )}
             <h3>
               <a href={`/projects/${project.id}/`}>{project.data.title}</a>
             </h3>

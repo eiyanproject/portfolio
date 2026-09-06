@@ -9,13 +9,20 @@ export interface SiteSettings {
   tagline: string;
   intro?: string;
   description: string;
-  accent: string;
   nav: { label: string; href: string }[];
   links?: { label: string; url: string }[];
   footer?: string;
+  /** Key from the theme registry in src/themes. */
+  theme?: string;
+  /** Per-setting overrides of the theme's layout. '' means "use the theme". */
+  layout?: {
+    projects?: string;
+    covers?: string;
+    density?: string;
+  };
 }
 
-export const settings: SiteSettings = data;
+export const settings = data as SiteSettings;
 
 /** Page title with the site name appended, avoiding "Afif — Afif" on the home page. */
 export const pageTitle = (title?: string) =>

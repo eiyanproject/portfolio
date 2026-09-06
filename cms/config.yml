@@ -29,7 +29,15 @@ collections:
           - { name: tagline, label: Tagline, widget: string, hint: 'One line under your name on the home page.' }
           - { name: intro, label: Home intro, widget: text, required: false, hint: 'Optional longer paragraph under the tagline.' }
           - { name: description, label: Meta description, widget: text, hint: 'Used by search engines and link previews.' }
-          - { name: accent, label: Accent colour, widget: string, hint: 'Any CSS colour, e.g. #58a6ff. Used for links.' }
+          - { name: theme, label: Theme, widget: select, default: 'github-dark', hint: 'Colours, fonts and default layout. Adding a theme is a code change; picking one is not.', options: [{ label: 'GitHub Dark', value: 'github-dark' }, { label: 'Paper', value: 'paper' }] }
+          - name: layout
+            label: Layout overrides
+            widget: object
+            collapsed: true
+            fields:
+              - { name: projects, label: Projects layout, widget: select, required: false, default: '', options: [{ label: 'Use theme default', value: '' }, { label: 'List', value: 'list' }, { label: 'Grid', value: 'grid' }] }
+              - { name: covers, label: Cover images on cards, widget: select, required: false, default: '', options: [{ label: 'Use theme default', value: '' }, { label: 'Show', value: 'on' }, { label: 'Hide', value: 'off' }] }
+              - { name: density, label: Spacing, widget: select, required: false, default: '', options: [{ label: 'Use theme default', value: '' }, { label: 'Compact', value: 'compact' }, { label: 'Comfortable', value: 'comfortable' }] }
           - name: nav
             label: Navigation
             widget: list

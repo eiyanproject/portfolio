@@ -1,5 +1,6 @@
 ---
 import { settings } from '../lib/settings';
+import { themeStyle, layout } from '../lib/theme';
 
 interface Props {
   title: string;
@@ -12,7 +13,12 @@ const year = new Date().getFullYear();
 ---
 
 <!doctype html>
-<html lang="en" style={`--accent: ${settings.accent}`}>
+<html
+  lang="en"
+  style={themeStyle}
+  data-projects={layout.projects}
+  data-density={layout.density}
+>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -56,6 +62,8 @@ const year = new Date().getFullYear();
 </html>
 
 <style is:global>
+  /* Fallbacks only — the real values arrive as inline custom properties on
+     <html>, written from the active theme in src/themes. */
   :root {
     --bg: #0d1117;
     --surface: #161b22;
@@ -63,8 +71,27 @@ const year = new Date().getFullYear();
     --text: #c9d1d9;
     --muted: #8b949e;
     --accent: #58a6ff;
-    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    --font-body: system-ui, sans-serif;
+    --font-heading: system-ui, sans-serif;
+    --mono: ui-monospace, Menlo, Consolas, monospace;
+    --radius: 8px;
     --measure: 46rem;
+
+    --gap: 1rem;
+    --pad: 1.25rem;
+    --section-gap: 2.5rem;
+  }
+
+  :root[data-density='compact'] {
+    --gap: 0.75rem;
+    --pad: 1rem;
+    --section-gap: 2rem;
+  }
+
+  :root[data-density='comfortable'] {
+    --gap: 1.25rem;
+    --pad: 1.5rem;
+    --section-gap: 3rem;
   }
 
   *,
@@ -77,7 +104,7 @@ const year = new Date().getFullYear();
     margin: 0;
     background: var(--bg);
     color: var(--text);
-    font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
+    font-family: var(--font-body);
     line-height: 1.6;
     display: flex;
     flex-direction: column;
@@ -96,7 +123,7 @@ const year = new Date().getFullYear();
     max-width: 100%;
     height: auto;
     display: block;
-    border-radius: 8px;
+    border-radius: var(--radius);
   }
 
   .site-header,
@@ -119,6 +146,7 @@ const year = new Date().getFullYear();
 
   .brand {
     color: var(--text);
+    font-family: var(--font-heading);
     font-weight: 600;
     font-size: 1.125rem;
   }
@@ -160,6 +188,11 @@ const year = new Date().getFullYear();
     padding: 0;
   }
 
+  h1,
+  h2,
+  h3 {
+    font-family: var(--font-heading);
+  }
   h1 {
     font-size: clamp(1.75rem, 4vw, 2.25rem);
     line-height: 1.2;
@@ -167,7 +200,7 @@ const year = new Date().getFullYear();
   }
   h2 {
     font-size: 1.25rem;
-    margin: 2.5rem 0 1rem;
+    margin: var(--section-gap) 0 1rem;
   }
 
   .lede {
@@ -185,7 +218,7 @@ const year = new Date().getFullYear();
   .empty {
     color: var(--muted);
     border: 1px dashed var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius);
     padding: 2rem;
     text-align: center;
   }
@@ -195,13 +228,18 @@ const year = new Date().getFullYear();
     padding: 0;
     margin: 0;
     display: grid;
-    gap: 1rem;
+    gap: var(--gap);
+  }
+
+  /* Layout variant: image-led grid instead of a text-led list. */
+  :root[data-projects='grid'] .card-list--projects {
+    grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
   }
 
   .card {
     border: 1px solid var(--border);
-    border-radius: 8px;
-    padding: 1.25rem;
+    border-radius: var(--radius);
+    padding: var(--pad);
     background: var(--surface);
   }
   .card h3 {
@@ -211,6 +249,13 @@ const year = new Date().getFullYear();
   .card p {
     margin: 0.25rem 0 0;
     color: var(--muted);
+  }
+  .card-cover {
+    margin: calc(var(--pad) * -1) calc(var(--pad) * -1) var(--pad);
+    border-radius: var(--radius) var(--radius) 0 0;
+    aspect-ratio: 16 / 9;
+    object-fit: cover;
+    width: calc(100% + var(--pad) * 2);
   }
 
   .tags {
@@ -236,7 +281,7 @@ const year = new Date().getFullYear();
   .prose pre {
     background: var(--surface);
     border: 1px solid var(--border);
-    border-radius: 8px;
+    border-radius: var(--radius);
     padding: 1rem;
     overflow-x: auto;
   }

@@ -3,13 +3,16 @@
   "tagline": "Infrastructure, homelab, and software projects.",
   "intro": "",
   "description": "Portfolio of Afif — infrastructure, homelab, and software projects.",
-  "accent": "#58a6ff",
+  "theme": "github-dark",
+  "layout": {
+    "projects": "",
+    "covers": "",
+    "density": ""
+  },
   "nav": [
     { "label": "Projects", "href": "/projects/" },
     { "label": "Writing", "href": "/writing/" }
   ],
-  "links": [
-    { "label": "GitHub", "url": "https://github.com/eiyanproject" }
-  ],
+  "links": [{ "label": "GitHub", "url": "https://github.com/eiyanproject" }],
   "footer": ""
 }
