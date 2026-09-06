@@ -1,13 +1,14 @@
 # Sveltia CMS — served at cms.eiyanproject.com, behind Cloudflare Access.
-# Edits are committed straight to `main`, which triggers the deploy workflow.
+# Edits commit straight to `main`, which triggers the deploy workflow.
 
 backend:
   name: github
   repo: eiyanproject/portfolio
   branch: main
-  # OAuth token-exchange endpoint. Replace once the Worker exists (step 4c);
-  # login will not work until then.
-  # base_url: https://<worker>.workers.dev   # uncomment once an OAuth worker exists
+  # base_url: https://<worker>.workers.dev   # only needed for OAuth login
+
+site_url: https://eiyanproject.com
+display_url: https://eiyanproject.com
 
 # Where uploads are written in the repo, and the URL they get on the site.
 media_folder: public/uploads
@@ -16,6 +17,36 @@ public_folder: /uploads
 publish_mode: simple
 
 collections:
+  - name: settings
+    label: Site settings
+    files:
+      - name: site
+        label: Site
+        file: src/data/settings.json
+        description: Name, tagline, navigation and links used across every page.
+        fields:
+          - { name: siteName, label: Site name, widget: string }
+          - { name: tagline, label: Tagline, widget: string, hint: 'One line under your name on the home page.' }
+          - { name: intro, label: Home intro, widget: text, required: false, hint: 'Optional longer paragraph under the tagline.' }
+          - { name: description, label: Meta description, widget: text, hint: 'Used by search engines and link previews.' }
+          - { name: accent, label: Accent colour, widget: string, hint: 'Any CSS colour, e.g. #58a6ff. Used for links.' }
+          - name: nav
+            label: Navigation
+            widget: list
+            summary: '{{fields.label}} → {{fields.href}}'
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: href, label: Path, widget: string, hint: 'e.g. /projects/ — keep the trailing slash.' }
+          - name: links
+            label: Links
+            widget: list
+            required: false
+            summary: '{{fields.label}}'
+            fields:
+              - { name: label, label: Label, widget: string }
+              - { name: url, label: URL, widget: string }
+          - { name: footer, label: Footer text, widget: string, required: false, hint: 'Leave blank for "© <year> <site name>".' }
+
   - name: pages
     label: Pages
     label_singular: Page
@@ -24,11 +55,15 @@ collections:
     slug: '{{slug}}'
     extension: md
     format: frontmatter
+    summary: '{{title}}'
+    view_filters:
+      - { label: Published, field: draft, pattern: false }
+      - { label: Drafts, field: draft, pattern: true }
     fields:
       - { name: title, label: Title, widget: string }
       - { name: description, label: Description, widget: string, required: false }
       - { name: order, label: Nav order, widget: number, default: 0, value_type: int }
-      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: draft, label: 'Draft — hide from the public site', widget: boolean, default: true, hint: 'On: appears only on preview.eiyanproject.com. Off: live on eiyanproject.com.' }
       - { name: body, label: Body, widget: markdown }
 
   - name: projects
@@ -39,18 +74,23 @@ collections:
     slug: '{{slug}}'
     extension: md
     format: frontmatter
+    summary: '{{title}}'
+    view_filters:
+      - { label: Published, field: draft, pattern: false }
+      - { label: Drafts, field: draft, pattern: true }
+      - { label: Featured, field: featured, pattern: true }
     fields:
       - { name: title, label: Title, widget: string }
-      - { name: summary, label: Summary, widget: text }
+      - { name: summary, label: Summary, widget: text, hint: 'One or two lines, shown on the projects list.' }
       - { name: date, label: Date, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
       - { name: tags, label: Tags, widget: list, default: [], required: false }
       - { name: cover, label: Cover image, widget: image, required: false }
-      - { name: coverAlt, label: Cover alt text, widget: string, required: false }
-      - { name: repo, label: Repository URL, widget: string, required: false }
-      - { name: url, label: Live URL, widget: string, required: false }
+      - { name: coverAlt, label: Cover alt text, widget: string, required: false, hint: 'Describe the image for screen readers.' }
+      - { name: repo, label: Repository URL, widget: string, required: false, hint: 'Must be a full URL, e.g. https://github.com/... or leave blank.' }
+      - { name: url, label: Live URL, widget: string, required: false, hint: 'Must be a full URL, or leave blank.' }
       - { name: attachment, label: Attachment (PDF etc.), widget: file, required: false }
-      - { name: featured, label: Featured, widget: boolean, default: false }
-      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: featured, label: Featured on the home page, widget: boolean, default: false }
+      - { name: draft, label: 'Draft — hide from the public site', widget: boolean, default: true, hint: 'On: appears only on preview.eiyanproject.com. Off: live on eiyanproject.com.' }
       - { name: body, label: Body, widget: markdown }
 
   - name: posts
@@ -61,13 +101,17 @@ collections:
     slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
     extension: md
     format: frontmatter
+    summary: '{{title}}'
+    view_filters:
+      - { label: Published, field: draft, pattern: false }
+      - { label: Drafts, field: draft, pattern: true }
     fields:
       - { name: title, label: Title, widget: string }
       - { name: description, label: Description, widget: string, required: false }
-      - { name: pubDate, label: Published, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
-      - { name: updatedDate, label: Updated, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false, required: false }
+      - { name: pubDate, label: Published date, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - { name: updatedDate, label: Updated date, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false, required: false }
       - { name: tags, label: Tags, widget: list, default: [], required: false }
       - { name: cover, label: Cover image, widget: image, required: false }
       - { name: coverAlt, label: Cover alt text, widget: string, required: false }
-      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: draft, label: 'Draft — hide from the public site', widget: boolean, default: true, hint: 'On: appears only on preview.eiyanproject.com. Off: live on eiyanproject.com.' }
       - { name: body, label: Body, widget: markdown }

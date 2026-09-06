@@ -2,6 +2,7 @@
 import { getCollection } from 'astro:content';
 import { showDrafts } from '../../lib/drafts';
 import Base from '../../layouts/Base.astro';
+import { pageTitle } from '../../lib/settings';
 
 
 const posts = (await getCollection('posts', ({ data }) => showDrafts || !data.draft)).sort(
@@ -9,7 +10,7 @@ const posts = (await getCollection('posts', ({ data }) => showDrafts || !data.dr
 );
 ---
 
-<Base title="Writing — Afif" description="Notes and posts by Afif.">
+<Base title={pageTitle('Writing')}>
   <h1>Writing</h1>
 
   {

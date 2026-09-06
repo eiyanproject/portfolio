@@ -1,23 +1,27 @@
 ---
 import { getCollection } from 'astro:content';
 import { showDrafts } from '../lib/drafts';
+import { settings } from '../lib/settings';
 import Base from '../layouts/Base.astro';
-
 
 const projects = (await getCollection('projects', ({ data }) => showDrafts || !data.draft)).sort(
   (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
 );
 
+const posts = (await getCollection('posts', ({ data }) => showDrafts || !data.draft))
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 3);
+
+// Featured projects take the home page when any are marked; otherwise the most
+// recent stand in, so the page is never empty just because nothing is starred.
 const featured = projects.filter((p) => p.data.featured);
 const shown = (featured.length > 0 ? featured : projects).slice(0, 4);
 ---
 
-<Base
-  title="Afif — Portfolio"
-  description="Portfolio of Afif — infrastructure, homelab, and software projects."
->
-  <h1>Afif</h1>
-  <p class="lede">Portfolio in progress.</p>
+<Base title={settings.siteName} description={settings.description}>
+  <h1>{settings.siteName}</h1>
+  <p class="lede">{settings.tagline}</p>
+  {settings.intro && <p>{settings.intro}</p>}
 
   <h2>Projects</h2>
   {
@@ -36,6 +40,29 @@ const shown = (featured.length > 0 ? featured : projects).slice(0, 4);
       </ul>
     )
   }
-
   {projects.length > shown.length && <p><a href="/projects/">All projects &rarr;</a></p>}
+
+  {
+    posts.length > 0 && (
+      <>
+        <h2>Writing</h2>
+        <ul class="card-list">
+          {posts.map((post) => (
+            <li class="card">
+              <h3>
+                <a href={`/writing/${post.id}/`}>{post.data.title}</a>
+              </h3>
+              <p class="meta">
+                {post.data.pubDate.toLocaleDateString('en-GB', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric',
+                })}
+              </p>
+            </li>
+          ))}
+        </ul>
+      </>
+    )
+  }
 </Base>

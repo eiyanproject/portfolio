@@ -1,4 +1,6 @@
 ---
+import { settings } from '../lib/settings';
+
 interface Props {
   title: string;
   description?: string;
@@ -6,28 +8,24 @@ interface Props {
 
 const { title, description } = Astro.props;
 const path = Astro.url.pathname;
-
-const nav = [
-  { href: '/projects/', label: 'Projects' },
-  { href: '/writing/', label: 'Writing' },
-];
+const year = new Date().getFullYear();
 ---
 
 <!doctype html>
-<html lang="en">
+<html lang="en" style={`--accent: ${settings.accent}`}>
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>{title}</title>
-    {description && <meta name="description" content={description} />}
+    <meta name="description" content={description ?? settings.description} />
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
   </head>
   <body>
     <header class="site-header">
-      <a href="/" class="brand">Afif</a>
+      <a href="/" class="brand">{settings.siteName}</a>
       <nav>
         {
-          nav.map((item) => (
+          settings.nav.map((item) => (
             <a href={item.href} aria-current={path.startsWith(item.href) ? 'page' : undefined}>
               {item.label}
             </a>
@@ -39,7 +37,20 @@ const nav = [
     <main><slot /></main>
 
     <footer class="site-footer">
-      <p>&copy; {new Date().getFullYear()} Afif</p>
+      <p>{settings.footer || `© ${year} ${settings.siteName}`}</p>
+      {
+        settings.links && settings.links.length > 0 && (
+          <ul class="footer-links">
+            {settings.links.map((link) => (
+              <li>
+                <a href={link.url} rel="me noopener">
+                  {link.label}
+                </a>
+              </li>
+            ))}
+          </ul>
+        )
+      }
     </footer>
   </body>
 </html>
@@ -52,6 +63,7 @@ const nav = [
     --text: #c9d1d9;
     --muted: #8b949e;
     --accent: #58a6ff;
+    --mono: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
     --measure: 46rem;
   }
 
@@ -84,6 +96,7 @@ const nav = [
     max-width: 100%;
     height: auto;
     display: block;
+    border-radius: 8px;
   }
 
   .site-header,
@@ -131,9 +144,20 @@ const nav = [
     padding-block: 1.5rem;
     color: var(--muted);
     font-size: 0.875rem;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
   }
   .site-footer p {
     margin: 0;
+  }
+  .footer-links {
+    display: flex;
+    gap: 1rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
   }
 
   h1 {
@@ -154,7 +178,8 @@ const nav = [
 
   .meta {
     color: var(--muted);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
+    font-family: var(--mono);
   }
 
   .empty {
@@ -197,6 +222,7 @@ const nav = [
     list-style: none;
   }
   .tags li {
+    font-family: var(--mono);
     font-size: 0.75rem;
     color: var(--muted);
     border: 1px solid var(--border);
@@ -215,6 +241,7 @@ const nav = [
     overflow-x: auto;
   }
   .prose code {
+    font-family: var(--mono);
     font-size: 0.9em;
   }
   .prose blockquote {

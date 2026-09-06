@@ -2,6 +2,7 @@
 import { getCollection, render } from 'astro:content';
 import { showDrafts } from '../../lib/drafts';
 import Base from '../../layouts/Base.astro';
+import { pageTitle } from '../../lib/settings';
 
 export async function getStaticPaths() {
   const projects = await getCollection('projects', ({ data }) => showDrafts || !data.draft);
@@ -15,7 +16,7 @@ const { Content } = await render(entry);
 const date = entry.data.date.toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
 ---
 
-<Base title={`${entry.data.title} — Afif`} description={entry.data.summary}>
+<Base title={pageTitle(entry.data.title)} description={entry.data.summary}>
   <article>
     <h1>{entry.data.title}</h1>
     <p class="meta">{date}{entry.data.draft && ' · draft'}</p>

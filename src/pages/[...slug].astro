@@ -5,6 +5,7 @@
 import { getCollection, render } from 'astro:content';
 import { showDrafts } from '../lib/drafts';
 import Base from '../layouts/Base.astro';
+import { pageTitle } from '../lib/settings';
 
 export async function getStaticPaths() {
   const pages = await getCollection('pages', ({ data }) => showDrafts || !data.draft);
@@ -16,7 +17,7 @@ const { entry } = Astro.props;
 const { Content } = await render(entry);
 ---
 
-<Base title={`${entry.data.title} — Afif`} description={entry.data.description}>
+<Base title={pageTitle(entry.data.title)} description={entry.data.description}>
   <article>
     <h1>{entry.data.title}</h1>
     {entry.data.draft && <p class="meta">draft</p>}
