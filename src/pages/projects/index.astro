@@ -1,0 +1,38 @@
+---
+import { getCollection } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+const showDrafts = import.meta.env.DEV;
+
+const projects = (await getCollection('projects', ({ data }) => showDrafts || !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+---
+
+<Base title="Projects — Afif" description="Things Afif has built.">
+  <h1>Projects</h1>
+
+  {
+    projects.length === 0 ? (
+      <p class="empty">Nothing published yet.</p>
+    ) : (
+      <ul class="card-list">
+        {projects.map((project) => (
+          <li class="card">
+            <h3>
+              <a href={`/projects/${project.id}/`}>{project.data.title}</a>
+            </h3>
+            <p>{project.data.summary}</p>
+            {project.data.tags.length > 0 && (
+              <ul class="tags">
+                {project.data.tags.map((tag) => (
+                  <li>{tag}</li>
+                ))}
+              </ul>
+            )}
+          </li>
+        ))}
+      </ul>
+    )
+  }
+</Base>

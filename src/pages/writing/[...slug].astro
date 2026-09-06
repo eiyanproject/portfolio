@@ -1,0 +1,44 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const showDrafts = import.meta.env.DEV;
+  const posts = await getCollection('posts', ({ data }) => showDrafts || !data.draft);
+
+  return posts.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const fmt = (d: Date) =>
+  d.toLocaleDateString('en-GB', { year: 'numeric', month: 'long', day: 'numeric' });
+---
+
+<Base title={`${entry.data.title} — Afif`} description={entry.data.description}>
+  <article>
+    <h1>{entry.data.title}</h1>
+    <p class="meta">
+      {fmt(entry.data.pubDate)}
+      {entry.data.updatedDate && ` · updated ${fmt(entry.data.updatedDate)}`}
+      {entry.data.draft && ' · draft'}
+    </p>
+
+    {entry.data.cover && <img src={entry.data.cover} alt={entry.data.coverAlt ?? ''} />}
+
+    {
+      entry.data.tags.length > 0 && (
+        <ul class="tags">
+          {entry.data.tags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="prose"><Content /></div>
+
+    <p><a href="/writing/">&larr; All writing</a></p>
+  </article>
+</Base>

@@ -1,42 +1,42 @@
 ---
-const title = 'Afif — Portfolio';
+import { getCollection } from 'astro:content';
+import Base from '../layouts/Base.astro';
+
+// Drafts are visible while running `astro dev`, excluded from production builds.
+const showDrafts = import.meta.env.DEV;
+
+const projects = (await getCollection('projects', ({ data }) => showDrafts || !data.draft)).sort(
+  (a, b) => b.data.date.valueOf() - a.data.date.valueOf()
+);
+
+const featured = projects.filter((p) => p.data.featured);
+const shown = (featured.length > 0 ? featured : projects).slice(0, 4);
 ---
 
-<!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>{title}</title>
-    <meta name="description" content="Portfolio of Afif — infrastructure, homelab, and software projects." />
-  </head>
-  <body>
-    <main class="box">
-      <h1>Afif</h1>
-      <p>Portfolio in progress.</p>
-    </main>
-  </body>
-</html>
+<Base
+  title="Afif — Portfolio"
+  description="Portfolio of Afif — infrastructure, homelab, and software projects."
+>
+  <h1>Afif</h1>
+  <p class="lede">Portfolio in progress.</p>
 
-<style>
-  body {
-    background: #0d1117;
-    color: #c9d1d9;
-    font-family: system-ui, sans-serif;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    margin: 0;
+  <h2>Projects</h2>
+  {
+    shown.length === 0 ? (
+      <p class="empty">Nothing published yet.</p>
+    ) : (
+      <ul class="card-list">
+        {shown.map((project) => (
+          <li class="card">
+            <h3>
+              <a href={`/projects/${project.id}/`}>{project.data.title}</a>
+            </h3>
+            <p>{project.data.summary}</p>
+          </li>
+        ))}
+      </ul>
+    )
   }
-  .box {
-    text-align: center;
-  }
-  h1 {
-    font-size: 2rem;
-    margin-bottom: 0.5rem;
-  }
-  p {
-    color: #8b949e;
-  }
-</style>
+
+  {projects.length > shown.length && <p><a href="/projects/">All projects &rarr;</a></p>}
+</Base>

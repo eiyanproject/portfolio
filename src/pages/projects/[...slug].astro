@@ -1,0 +1,53 @@
+---
+import { getCollection, render } from 'astro:content';
+import Base from '../../layouts/Base.astro';
+
+export async function getStaticPaths() {
+  const showDrafts = import.meta.env.DEV;
+  const projects = await getCollection('projects', ({ data }) => showDrafts || !data.draft);
+
+  return projects.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+
+const date = entry.data.date.toLocaleDateString('en-GB', { year: 'numeric', month: 'long' });
+---
+
+<Base title={`${entry.data.title} — Afif`} description={entry.data.summary}>
+  <article>
+    <h1>{entry.data.title}</h1>
+    <p class="meta">{date}{entry.data.draft && ' · draft'}</p>
+
+    {entry.data.cover && <img src={entry.data.cover} alt={entry.data.coverAlt ?? ''} />}
+
+    <p class="lede">{entry.data.summary}</p>
+
+    {
+      entry.data.tags.length > 0 && (
+        <ul class="tags">
+          {entry.data.tags.map((tag) => (
+            <li>{tag}</li>
+          ))}
+        </ul>
+      )
+    }
+
+    <div class="prose"><Content /></div>
+
+    {
+      (entry.data.repo || entry.data.url || entry.data.attachment) && (
+        <p class="meta">
+          {entry.data.url && <a href={entry.data.url}>Live</a>}
+          {entry.data.url && entry.data.repo && ' · '}
+          {entry.data.repo && <a href={entry.data.repo}>Source</a>}
+          {(entry.data.url || entry.data.repo) && entry.data.attachment && ' · '}
+          {entry.data.attachment && <a href={entry.data.attachment}>Attachment</a>}
+        </p>
+      )
+    }
+
+    <p><a href="/projects/">&larr; All projects</a></p>
+  </article>
+</Base>
