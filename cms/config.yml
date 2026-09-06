@@ -1,0 +1,73 @@
+# Sveltia CMS — served at cms.eiyanproject.com, behind Cloudflare Access.
+# Edits are committed straight to `main`, which triggers the deploy workflow.
+
+backend:
+  name: github
+  repo: eiyanproject/portfolio
+  branch: main
+  # OAuth token-exchange endpoint. Replace once the Worker exists (step 4c);
+  # login will not work until then.
+  base_url: https://REPLACE-ME.workers.dev
+
+# Where uploads are written in the repo, and the URL they get on the site.
+media_folder: public/uploads
+public_folder: /uploads
+
+publish_mode: simple
+
+collections:
+  - name: pages
+    label: Pages
+    label_singular: Page
+    folder: src/content/pages
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: string, required: false }
+      - { name: order, label: Nav order, widget: number, default: 0, value_type: int }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: projects
+    label: Projects
+    label_singular: Project
+    folder: src/content/projects
+    create: true
+    slug: '{{slug}}'
+    extension: md
+    format: frontmatter
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: summary, label: Summary, widget: text }
+      - { name: date, label: Date, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - { name: tags, label: Tags, widget: list, default: [], required: false }
+      - { name: cover, label: Cover image, widget: image, required: false }
+      - { name: coverAlt, label: Cover alt text, widget: string, required: false }
+      - { name: repo, label: Repository URL, widget: string, required: false }
+      - { name: url, label: Live URL, widget: string, required: false }
+      - { name: attachment, label: Attachment (PDF etc.), widget: file, required: false }
+      - { name: featured, label: Featured, widget: boolean, default: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: body, label: Body, widget: markdown }
+
+  - name: posts
+    label: Posts
+    label_singular: Post
+    folder: src/content/posts
+    create: true
+    slug: '{{year}}-{{month}}-{{day}}-{{slug}}'
+    extension: md
+    format: frontmatter
+    fields:
+      - { name: title, label: Title, widget: string }
+      - { name: description, label: Description, widget: string, required: false }
+      - { name: pubDate, label: Published, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false }
+      - { name: updatedDate, label: Updated, widget: datetime, format: 'YYYY-MM-DD', date_format: 'YYYY-MM-DD', time_format: false, required: false }
+      - { name: tags, label: Tags, widget: list, default: [], required: false }
+      - { name: cover, label: Cover image, widget: image, required: false }
+      - { name: coverAlt, label: Cover alt text, widget: string, required: false }
+      - { name: draft, label: Draft, widget: boolean, default: true }
+      - { name: body, label: Body, widget: markdown }

@@ -39,3 +39,9 @@ jobs:
           rsync -avz --delete \
             -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
             dist/ "deploy@${{ secrets.DEPLOY_HOST }}:/var/www/portfolio/"
+
+      - name: Deploy CMS to OCI
+        run: |
+          rsync -avz --delete \
+            -e "ssh -i ~/.ssh/id_ed25519 -o StrictHostKeyChecking=yes" \
+            cms/ "deploy@${{ secrets.DEPLOY_HOST }}:/var/www/cms/"
